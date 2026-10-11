@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Five years</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=DM+Sans:wght@400;500&display=swap">
+<style>
+:root{--bg:#0d0f2b;--bg2:#1b1442;--rose:#f4a6bd;--gold:#ffdc8c;--ink:#f6efff;--dim:#a79fc9;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,var(--bg2),var(--bg) 70%);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;overflow-x:hidden}
+canvas#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+main{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:32px 20px 48px;text-align:center}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:300;font-size:clamp(2.2rem,8vw,3.6rem);line-height:1.1;margin:24px 0 12px;letter-spacing:-.01em}
+.lede{color:var(--dim);max-width:46ch;margin:0 auto;line-height:1.6}
+.sky{position:relative;height:340px;margin:28px auto 8px;max-width:560px}
+.sky svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.sky line{stroke:var(--gold);stroke-width:1.2;stroke-dasharray:var(--len);stroke-dashoffset:var(--len);opacity:.7;transition:stroke-dashoffset 1.6s ease}
+.sky line.on{stroke-dashoffset:0}
+.star{position:absolute;width:56px;height:56px;margin:-28px 0 0 -28px;border:0;background:none;cursor:pointer;color:var(--gold);border-radius:50%;padding:0}
+.star svg{position:static;width:100%;height:100%;transition:transform .5s cubic-bezier(.3,1.6,.5,1),filter .4s}
+.star:not(.seen) svg{animation:pulse 2.4s ease-in-out infinite;opacity:.75}
+.star.seen svg{filter:drop-shadow(0 0 10px var(--gold));transform:scale(1.25) rotate(72deg)}
+.star:focus-visible{outline:2px solid var(--rose);outline-offset:2px}
+.star span{position:absolute;left:50%;top:100%;transform:translateX(-50%);font-size:.75rem;color:var(--dim);white-space:nowrap}
+@keyframes pulse{50%{transform:scale(1.18);opacity:1}}
+.card{min-height:170px;padding:22px;border:1px solid rgba(255,220,140,.25);border-radius:18px;background:rgba(255,255,255,.04);backdrop-filter:blur(6px);display:flex;flex-direction:column;justify-content:center;gap:8px}
+.card h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.4rem;margin:0;color:var(--rose)}
+.card p{margin:0;line-height:1.65}
+.card img{max-width:100%;max-height:220px;border-radius:12px;margin:6px auto 0}
+.card.pop{animation:pop .5s ease}
+@keyframes pop{from{opacity:0;transform:scale(.96)}}
+.count{color:var(--dim);font-size:.9rem;margin:14px 0 0}
+#finale{position:fixed;inset:0;z-index:5;display:none;align-items:center;justify-content:center;padding:28px;background:rgba(13,15,43,.9);text-align:center}
+#finale.show{display:flex;animation:pop 1s ease}
+#finale div{max-width:520px}
+#finale h2{font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:300;font-size:clamp(2rem,7vw,3rem);margin:0 0 16px}
+#finale p{line-height:1.7;color:var(--ink);white-space:pre-line}
+#finale button{margin-top:22px;padding:12px 22px;border-radius:999px;border:1px solid var(--rose);background:none;color:var(--rose);font:inherit;cursor:pointer}
+.heart{position:fixed;bottom:-30px;z-index:6;color:var(--rose);animation:rise linear forwards;pointer-events:none}
+@keyframes rise{to{transform:translateY(-110vh) rotate(25deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<main>
+  <h1 id="title"></h1>
+  <p class="lede" id="lede"></p>
+  <div class="sky" id="map"></div>
+  <div class="card" id="card"><p style="color:var(--dim)">Tap a star to open a memory.</p></div>
+  <p class="count" id="count"></p>
+</main>
+<section id="finale"><div>
+  <h2 id="fTitle"></h2><p id="fText"></p>
+  <button id="again">Look at the sky again</button>
+</div></section>
+<script>
+/* ===== EDIT THIS SECTION ===== */
+const HER = "Elizabeth";
+const YOU = "Your husband, Steven :)";
+const START = "December, 2021";           // when you got together
+const memories = [                        // one per year; add photos by pasting a data: URI into img
+  {label:"Year 1", title:"Where it started :)", text:"We met together on roblox, we were complete polar opposites yet we still found time to spend with each other late at night playing games like arsenal, ragdoll engine, or phantom forces because you still used that terrible macbook lol. Yet we still had fun despite not having much at all to do together, 1,531 miles away. We bonded together over music, cars, shows, movies, and games. Then came the day where we both said I love you. It felt like it took forever to build up the courage to say that haha, yet I got butterflies and I immediately knew you were the girl I'd choose to marry. :)", img:"IMG_3047.jpg"},
+  {label:"Year 2", title:"My favorite memory", text:"My favorite memory was seeing you in person for the first time !!! I was so excited but nervous at the same time. The moment I saw you my jaw dropped and my heart burst into a million pieces, you were so beautiful in your gray dress, with your beautiful hair, and your beautiful hazel eyes. Im pretty sure I lost track of the entire conversation we had because I was too busy staring at your eyes. It still happens <3.", img:"IMG_0830.JPG"},
+  {label:"Year 3", title:"What we've been through", text:"I understand that some days we will have our ups and downs, but that will never stop me from loving you, ever. We had terrible times in the past yet we've grown so much together and we are still continuing to grow and learn more about each other each and every day. I could never ask to do this with anybody else other than you, because you are worth it lizzie. I would do anything in the world if it meant I would spend the rest of my life with you my love.", img:"heart.jpg"},
+  {label:"Year 4", title:"The little things", text:"I enjoy every single thing we do. I enjoy our late night talks, our laughs we share together in bed watching youtube or making silly jokes, I love the notifications you send me on life360, I love the way your eyes squint when you smile and laugh, I love the way you chew when you eat food, and I love the way you get so excited to tell me the things you did at school or work or with your friends. All these little things are what makes you lizzie and I love that so much. I could never trade it for anything in the world sweetheart.", img:"lizziee.jpg"},
+  {label:"Year 5", title:"Right now", text:"We made it to year 5 !!! YAY :)) this year is almost coming to an end, and we will be able to share our 6th year together and I cant wait for what the future holds for us baby. Even though this year has been difficult for the both of us we still had our amazing moments together, especially when you came to visit me during the summer. You make me feel so special and loved and nobody else in the world can do that but you elizabeth. I love you dearly. I love you endlessly. I love you forever.", img:"us.jpg"}
+];
+const finale = {title:`Happy Girlfriends Day, ${HER}`,
+  text:`Five years in, and I'd pick you again every time.\n\nThe best girlfriend/wife ever !!\n\n- ${YOU}`};
+/* ============================= */
+const $=id=>document.getElementById(id);
+$('title').textContent=`${HER}, we have five years of stars`;
+$('lede').textContent=`Since ${START}. Each star is a year. Tap them all :).`;
+const pts=[[12,70],[32,28],[52,62],[72,22],[90,56]];
+const map=$('map'),NS='http://www.w3.org/2000/svg';
+const svg=document.createElementNS(NS,'svg');svg.setAttribute('viewBox','0 0 100 100');svg.setAttribute('preserveAspectRatio','none');map.appendChild(svg);
+const lines=[];
+for(let i=0;i<4;i++){const l=document.createElementNS(NS,'line');
+  l.setAttribute('x1',pts[i][0]);l.setAttribute('y1',pts[i][1]);l.setAttribute('x2',pts[i+1][0]);l.setAttribute('y2',pts[i+1][1]);
+  l.style.setProperty('--len',120);svg.appendChild(l);lines.push(l);}
+const seen=new Set();
+const starSVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.5l2.9 6.9 7.4.6-5.6 4.8 1.7 7.2L12 17l-6.4 4 1.7-7.2L1.7 9l7.4-.6z"/></svg>';
+memories.forEach((m,i)=>{
+  const b=document.createElement('button');b.className='star';b.style.left=pts[i][0]+'%';b.style.top=pts[i][1]+'%';
+  b.setAttribute('aria-label',m.label+': '+m.title);b.innerHTML=starSVG+'<span>'+m.label+'</span>';
+  b.onclick=()=>open(i,b);map.appendChild(b);
+});
+function open(i,b){
+  const m=memories[i],c=$('card');
+  c.classList.remove('pop');void c.offsetWidth;c.classList.add('pop');
+  c.innerHTML='';
+  const h=document.createElement('h2');h.textContent=m.title;
+  const p=document.createElement('p');p.textContent=m.text;
+  c.append(h,p);
+  if(m.img){const im=document.createElement('img');im.src=m.img;im.alt=m.title;c.appendChild(im);}
+  b.classList.add('seen');seen.add(i);
+  $('count').textContent=seen.size+' of 5 stars found';
+  lines.forEach((l,k)=>{if(seen.has(k)&&seen.has(k+1))l.classList.add('on')});
+  if(seen.size===5)setTimeout(done,2200);
+}
+function done(){
+  lines.forEach(l=>l.classList.add('on'));
+  $('fTitle').textContent=finale.title;$('fText').textContent=finale.text;
+  $('finale').classList.add('show');
+  for(let i=0;i<28;i++)setTimeout(()=>{
+    const h=document.createElement('div');h.className='heart';h.textContent='\u2665';
+    h.style.left=Math.random()*100+'vw';h.style.fontSize=14+Math.random()*26+'px';
+    h.style.animationDuration=4+Math.random()*4+'s';document.body.appendChild(h);
+    setTimeout(()=>h.remove(),8500);},i*140);
+}
+$('again').onclick=()=>$('finale').classList.remove('show');
+/* starfield */
+const cv=$('sky'),cx=cv.getContext('2d');let W,H,S=[];
+function size(){W=cv.width=innerWidth;H=cv.height=innerHeight;S=Array.from({length:Math.min(140,W/6)},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+.3,p:Math.random()*6.28,s:.4+Math.random()*1.2}))}
+size();addEventListener('resize',size);
+(function t(n){cx.clearRect(0,0,W,H);S.forEach(s=>{cx.globalAlpha=.35+.65*Math.abs(Math.sin(n/1000*s.s+s.p));cx.fillStyle='#fff';cx.beginPath();cx.arc(s.x,s.y,s.r,0,6.28);cx.fill()});requestAnimationFrame(t)})(0);
+</script>
+</body>
+</html>
